@@ -1,6 +1,8 @@
 using Rocket.Core.Plugins;
 using Rocket.Unturned.Player;
 using Rocket.Unturned.Events;
+using Rocket.Unturned.Chat;
+using Rocket.Unturned;
 using SDG.Unturned;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +27,12 @@ namespace AdvancedSorter
 
         private void OnJoin(UnturnedPlayer player)
         {
-            EffectManager.sendUIEffect(EFFECT_ID, EFFECT_ID, player.CSteamID, true);
+            EffectManager.sendUIEffect(
+                EFFECT_ID,
+                EFFECT_ID,
+                player.Player.channel.owner.transportConnection,
+                true
+            );
         }
 
         private void OnEffectButtonClicked(Player player, string buttonName)
@@ -33,8 +40,10 @@ namespace AdvancedSorter
             if (buttonName != "sort_btn") return;
 
             var uPlayer = UnturnedPlayer.FromPlayer(player);
+
             Sort(uPlayer);
-            uPlayer.ChatMessage("Инвентарь отсортирован");
+
+            UnturnedChat.Say(uPlayer, "Инвентарь отсортирован");
         }
 
         public static void Sort(UnturnedPlayer player)
@@ -42,31 +51,38 @@ namespace AdvancedSorter
             var inv = player.Player.inventory;
             List<Item> items = new List<Item>();
 
+            // 🔥 собираем все предметы
             for (byte page = 0; page < PlayerInventory.PAGES; page++)
             {
                 byte count = inv.getItemCount(page);
 
                 for (byte i = 0; i < count; i++)
                 {
-                    items.Add(inv.getItem(page, i).item);
+                    var jar = inv.getItem(page, i);
+                    if (jar != null)
+                        items.Add(jar.item);
                 }
-
-                inv.removeItems(page);
             }
 
-            // 🔥 стаки
+            // 🔥 полностью очищаем инвентарь
+            inv.clear();
+
+            // 🔥 объединяем стаки
             items = MergeStacks(items);
 
-            // 🧠 сортировка
+            // 🔥 сортировка
             var sorted = items
                 .OrderBy(i => GetType(i))
                 .ThenBy(i => i.id)
                 .ToList();
 
+            // 🔥 возвращаем предметы
             foreach (var item in sorted)
             {
                 if (!inv.tryAddItem(item, true))
+                {
                     player.GiveItem(item.id, item.amount);
+                }
             }
         }
 
@@ -78,9 +94,11 @@ namespace AdvancedSorter
             foreach (var group in grouped)
             {
                 ushort id = group.Key;
-                byte total = (byte)group.Sum(x => x.amount);
+                int total = group.Sum(x => x.amount);
 
-                var asset = (ItemAsset)Assets.find(EAssetType.ITEM, id);
+                var asset = Assets.find(EAssetType.ITEM, id) as ItemAsset;
+                if (asset == null) continue;
+
                 byte max = asset.amount;
 
                 while (total > 0)
@@ -96,7 +114,8 @@ namespace AdvancedSorter
 
         private static int GetType(Item item)
         {
-            var asset = (ItemAsset)Assets.find(EAssetType.ITEM, item.id);
+            var asset = Assets.find(EAssetType.ITEM, item.id) as ItemAsset;
+            if (asset == null) return 999;
 
             if (asset is ItemGunAsset) return 0;
             if (asset is ItemMagazineAsset) return 1;
