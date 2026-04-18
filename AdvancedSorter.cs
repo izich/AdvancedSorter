@@ -2,7 +2,6 @@ using Rocket.Core.Plugins;
 using Rocket.Unturned.Player;
 using Rocket.Unturned.Events;
 using SDG.Unturned;
-using Steamworks;
 using System.Collections.Generic;
 using System.Linq;
 
