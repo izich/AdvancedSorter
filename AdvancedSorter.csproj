@@ -19,9 +19,5 @@
     <Reference Include="UnityEngine">
       <HintPath>libs/UnityEngine.dll</HintPath>
     </Reference>
-
-    <Reference Include="Steamworks.NET">
-      <HintPath>libs/Steamworks.NET.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
