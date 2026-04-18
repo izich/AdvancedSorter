@@ -7,11 +7,21 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>libs/Assembly-CSharp.dll</HintPath>
     </Reference>
+
     <Reference Include="Rocket.Unturned">
       <HintPath>libs/Rocket.Unturned.dll</HintPath>
     </Reference>
+
+    <Reference Include="Rocket.Core">
+      <HintPath>libs/Rocket.Core.dll</HintPath>
+    </Reference>
+
     <Reference Include="UnityEngine">
       <HintPath>libs/UnityEngine.dll</HintPath>
+    </Reference>
+
+    <Reference Include="Steamworks.NET">
+      <HintPath>libs/Steamworks.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
