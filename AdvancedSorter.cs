@@ -26,17 +26,6 @@ namespace AdvancedSorter
             UnturnedChat.Say(player, "Напиши /sort для сортировки");
         }
 
-        // 👉 КОМАНДА вместо UI
-        [RocketCommand("sort")]
-        public void SortCommand(IRocketPlayer caller, string[] command)
-        {
-            var player = caller as UnturnedPlayer;
-            if (player == null) return;
-
-            Sort(player);
-            UnturnedChat.Say(player, "Инвентарь отсортирован");
-        }
-
         public static void Sort(UnturnedPlayer player)
         {
             var inv = player.Player.inventory;
