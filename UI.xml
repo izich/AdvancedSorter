@@ -1,0 +1,7 @@
+<Effect>
+  <Canvas>
+    <Panel AnchorMin="0.85 0.4" AnchorMax="0.98 0.5">
+      <Button Name="sort_btn" Text="SORT" />
+    </Panel>
+  </Canvas>
+</Effect>
